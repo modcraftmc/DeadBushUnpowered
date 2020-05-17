@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+group 'fr.modcraftmc.pluginloader'
+version '1.0-BETA'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
