@@ -3,23 +3,16 @@ package fr.modcraftmc.pluginloader.plugin;
 import org.apache.commons.lang3.Validate;
 
 import java.io.File;
-import java.util.List;
 
 public abstract class PluginBase implements Plugin {
 
     protected File pluginFolder = new File(".", "plugins");
     protected File dataFolder = new File(pluginFolder, "configs");
 
-    private ClassLoader classLoader = null;
-
-    private String id;
-    private String name;
-    private String version;
-    private String description;
-    private List<String> authors;
+    private PluginInformations pluginInformations;
 
     public PluginBase() {
-         classLoader = this.getClass().getClassLoader();
+         ClassLoader classLoader = this.getClass().getClassLoader();
 
         if (!(classLoader instanceof PluginClassLoader)) {
             throw new IllegalStateException("invalid class loader");
@@ -29,6 +22,8 @@ public abstract class PluginBase implements Plugin {
     }
 
     public void init() {
+
+        onEnable();
 
     }
 
@@ -49,5 +44,11 @@ public abstract class PluginBase implements Plugin {
         return clazz.cast(plugin);
     }
 
+    public void setPluginInformations(PluginInformations pluginInformations) {
+        this.pluginInformations = pluginInformations;
+    }
 
+    public PluginInformations getPluginInformations() {
+        return pluginInformations;
+    }
 }

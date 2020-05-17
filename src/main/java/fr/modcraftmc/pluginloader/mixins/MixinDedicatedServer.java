@@ -1,10 +1,9 @@
 package fr.modcraftmc.pluginloader.mixins;
 
 import com.google.gson.Gson;
-import fr.modcraftmc.pluginloader.plugin.Plugin;
-import fr.modcraftmc.pluginloader.plugin.PluginBase;
-import fr.modcraftmc.pluginloader.plugin.PluginLoadException;
+import fr.modcraftmc.pluginloader.plugin.*;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.dedicated.PendingCommand;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -17,8 +16,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.jar.JarFile;
 
 @Mixin(DedicatedServer.class)
@@ -35,6 +36,8 @@ public class MixinDedicatedServer {
     @Shadow
     @Final
     private static Logger LOGGER;
+
+    @Shadow @Final public List<PendingCommand> pendingCommandList;
 
     @Inject(method = "init", at = @At("HEAD"))
     public void init(CallbackInfoReturnable<Boolean> cir) {
@@ -66,11 +69,21 @@ public class MixinDedicatedServer {
         if (!file.getName().endsWith(".jar")) throw new PluginLoadException(file);
 
         String json = getPluginJson(file);
-        PluginBase plugin = gson.fromJson(json, PluginBase.class);
+        PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
+
+        try {
+            LOGGER.info("successfully load plugin : " + pluginInformations.getName());
+            PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), file);
+            PluginBase plugin = classLoader.plugin;
+            plugin.setPluginInformations(pluginInformations);
+
+            pluginLoaded.add(plugin);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
 
-        //pluginLoaded.add(plugin);
-        //LOGGER.info("plugin loaded : " + plugin.getDisplayName());
+
 
     }
 

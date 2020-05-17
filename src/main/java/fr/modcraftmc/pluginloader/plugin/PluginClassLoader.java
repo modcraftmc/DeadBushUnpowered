@@ -2,21 +2,27 @@ package fr.modcraftmc.pluginloader.plugin;
 
 import org.apache.commons.lang3.Validate;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class PluginClassLoader extends URLClassLoader {
 
-    PluginBase plugin;
+    public PluginBase plugin;
+
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
 
 
-    public PluginClassLoader(final ClassLoader parent, final String mainClass, final String file) {
-        super(new URL[] {});
+    public PluginClassLoader(final String mainClass,final ClassLoader parent, final File file) throws MalformedURLException {
+        super(new URL[] {file.toURI().toURL()}, parent);
 
         try {
             Class<?> jarClass;
             try {
-                jarClass = Class.forName("", true, this);
+                jarClass = Class.forName(mainClass, true, this);
             } catch (ClassNotFoundException ex) {
                 throw new PluginLoadException();
             }
