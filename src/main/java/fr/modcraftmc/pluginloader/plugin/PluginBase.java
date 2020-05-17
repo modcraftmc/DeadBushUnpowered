@@ -1,6 +1,8 @@
 package fr.modcraftmc.pluginloader.plugin;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
@@ -8,6 +10,7 @@ public abstract class PluginBase implements Plugin {
 
     protected File pluginFolder = new File(".", "plugins");
     protected File dataFolder = new File(pluginFolder, "configs");
+    protected Logger LOGGER = LogManager.getLogger();
 
     private PluginInformations pluginInformations;
 
@@ -22,10 +25,9 @@ public abstract class PluginBase implements Plugin {
     }
 
     public void init() {
-
         onEnable();
-
     }
+
 
     public static <T extends PluginBase> T getPlugin(Class<T> clazz) {
         Validate.notNull(clazz, "can't be null");

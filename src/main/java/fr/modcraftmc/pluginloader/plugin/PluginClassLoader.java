@@ -10,14 +10,16 @@ import java.net.URLClassLoader;
 public class PluginClassLoader extends URLClassLoader {
 
     public PluginBase plugin;
+    public PluginInformations informations;
 
     static {
         ClassLoader.registerAsParallelCapable();
     }
 
 
-    public PluginClassLoader(final String mainClass,final ClassLoader parent, final File file) throws MalformedURLException {
+    public PluginClassLoader(final String mainClass,final ClassLoader parent, final PluginInformations pluginInformations ,final File file) throws MalformedURLException {
         super(new URL[] {file.toURI().toURL()}, parent);
+        this.informations = pluginInformations;
 
         try {
             Class<?> jarClass;
@@ -45,6 +47,7 @@ public class PluginClassLoader extends URLClassLoader {
         Validate.notNull(pluginBase, "plugin null");
         Validate.isTrue(pluginBase.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
 
+        pluginBase.setPluginInformations(informations);
         pluginBase.init();
 
     }

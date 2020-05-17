@@ -2,17 +2,22 @@ buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url='https://dist.creeper.host/Sponge/maven' }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.2'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: "com.github.johnrengelman.shadow"
 
 version = modVersion
 group = modGroup
@@ -113,11 +118,39 @@ mixin {
     add sourceSets.main, "mixins.deadbushunpowered.refmap.json"
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
     compile 'org.spongepowered:mixin:0.8.1-SNAPSHOT'
+    shade group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
 
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+shadowJar {
+    configurations = [ project.configurations.shade ]
+    classifier = 'mod'
+
+    dependencies {
+        exclude(dependency('com.google.code.gson:gson:.*'))
+    }
+}
+
+jar.finalizedBy shadowJar
+
+
+reobf {
+    shadowJar {}
 }

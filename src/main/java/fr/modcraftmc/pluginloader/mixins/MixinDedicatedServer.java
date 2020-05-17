@@ -73,9 +73,8 @@ public class MixinDedicatedServer {
 
         try {
             LOGGER.info("successfully load plugin : " + pluginInformations.getName());
-            PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), file);
+            PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations ,file);
             PluginBase plugin = classLoader.plugin;
-            plugin.setPluginInformations(pluginInformations);
 
             pluginLoaded.add(plugin);
         } catch (MalformedURLException e) {
