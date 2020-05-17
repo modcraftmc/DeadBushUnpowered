@@ -2,6 +2,7 @@ package fr.modcraftmc.pluginloader.mixins;
 
 import com.google.gson.Gson;
 import fr.modcraftmc.pluginloader.plugin.Plugin;
+import fr.modcraftmc.pluginloader.plugin.PluginBase;
 import fr.modcraftmc.pluginloader.plugin.PluginLoadException;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.apache.commons.io.FileUtils;
@@ -17,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.jar.JarFile;
 
@@ -26,6 +26,7 @@ public class MixinDedicatedServer {
 
 
     private static File pluginFolder = new File(".", "plugins");
+    private static File configFolder = new File(pluginFolder, "configs");
 
     private static ArrayList<Plugin> pluginLoaded = new ArrayList<>();
 
@@ -56,8 +57,6 @@ public class MixinDedicatedServer {
 
         });
 
-
-
     }
 
     private void checkPlugin(File file) throws PluginLoadException {
@@ -67,10 +66,11 @@ public class MixinDedicatedServer {
         if (!file.getName().endsWith(".jar")) throw new PluginLoadException(file);
 
         String json = getPluginJson(file);
-        Plugin plugin = gson.fromJson(json, Plugin.class);
+        PluginBase plugin = gson.fromJson(json, PluginBase.class);
 
-        pluginLoaded.add(plugin);
-        LOGGER.info("plugin loaded : " + plugin.getDisplayName());
+
+        //pluginLoaded.add(plugin);
+        //LOGGER.info("plugin loaded : " + plugin.getDisplayName());
 
     }
 
