@@ -1,16 +1,21 @@
 package fr.modcraftmc.pluginloader.plugin;
 
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
+@Mod.EventBusSubscriber
 public abstract class PluginBase implements Plugin {
 
     protected File pluginFolder = new File(".", "plugins");
     protected File dataFolder = new File(pluginFolder, "configs");
     protected Logger LOGGER = LogManager.getLogger();
+    public static PluginBase instance;
 
     private PluginInformations pluginInformations;
 
@@ -21,11 +26,21 @@ public abstract class PluginBase implements Plugin {
             throw new IllegalStateException("invalid class loader");
         }
 
+        instance = this;
         ((PluginClassLoader) classLoader).initialize(this);
     }
 
     public void init() {
         onEnable();
+    }
+
+    @SubscribeEvent
+    public static void onServerShutdown(FMLServerStoppingEvent event) {
+        PluginBase.instance.shutdown();
+    }
+
+    public void shutdown() {
+        onDisable();
     }
 
 
