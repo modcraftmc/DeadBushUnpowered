@@ -28,12 +28,11 @@ public class PluginCommand {
         List<ITextComponent> extras = new ArrayList<>();
         for (PluginBase plugin : plugins) {
 
-            ITextComponent text = new StringTextComponent("§e" + plugin.getPluginInformations().getName());
-            text.applyTextStyle((test)-> {
-                test.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("§aID: " + plugin.getPluginInformations().getId()
-                + "\n" + "Nom: " + plugin.getPluginInformations().getName()
-                + "\n" + "Créé par: " + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray()))));
-            });
+            ITextComponent text = new StringTextComponent("§a" + plugin.getPluginInformations().getName());
+            text.applyTextStyle((test)-> test.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("§aID: " + plugin.getPluginInformations().getId()
+            + "\n" + "Nom: " + plugin.getPluginInformations().getName()
+            + "\n" + "Créé par: " + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray())
+            + "\n" + "Version: " + plugin.getPluginInformations().getVersion()))));
             extras.add(text);
         }
 

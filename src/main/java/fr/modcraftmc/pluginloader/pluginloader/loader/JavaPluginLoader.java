@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.jar.JarFile;
 
 public class JavaPluginLoader {
@@ -29,31 +28,42 @@ public class JavaPluginLoader {
 
 
     public void handleStart() {
+        Thread working = new Thread(() -> {
 
-        LOGGER.info("DeadBushUnpowered is loading");
+            LOGGER.info("DeadBushUnpowered is loading");
 
-        LOGGER.info("loading plugin phase DISCOVERING");
-        if (!pluginFolder.exists()) pluginFolder.mkdirs();
-        Collection<File> pluginToLoad = FileUtils.listFiles(pluginFolder, null, true);
-        LOGGER.info(String.format("Found %s plugins to load", pluginToLoad.size()));
+            LOGGER.info("loading plugin phase DISCOVERING");
+            if (!pluginFolder.exists()) pluginFolder.mkdirs();
+            Collection<File> pluginToLoad = FileUtils.listFiles(pluginFolder, null, true);
+            LOGGER.info(String.format("Found %s plugins to load", pluginToLoad.size()));
 
-        LOGGER.info("loading plugin phase LOADING");
-        pluginToLoad.forEach((plugin)-> {
+            LOGGER.info("loading plugin phase LOADING");
+            pluginToLoad.forEach((plugin)-> {
 
-            LOGGER.info("attempting to load" + plugin.getName());
+                LOGGER.info("attempting to load" + plugin.getName());
 
-            try {
-                checkPlugin(plugin);
-            } catch (PluginLoadException e) {
-                e.printStackTrace();
-                pluginToLoad.remove(plugin);
-                return;
-            }
+                try {
+                    checkPlugin(plugin);
+                } catch (PluginLoadException e) {
+                    e.printStackTrace();
+                    pluginToLoad.remove(plugin);
+                    return;
+                }
 
-            loadPlugins(pluginToLoad);
+                loadPlugins(pluginToLoad);
 
-        });
-        LOGGER.info("plugin loading finish");
+            });
+            LOGGER.info("plugin loading finish");
+            Thread.currentThread().interrupt();
+
+        }, "PluginLoaderWorker");
+        working.start();
+        try {
+            working.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -71,31 +81,30 @@ public class JavaPluginLoader {
     }
 
     public void loadPlugins(Collection<File> toload) {
-        Thread working = new Thread(() -> toload.forEach((file -> {
+        toload.forEach((file -> {
 
             String json = getPluginJson(file);
             PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
-
+            PluginBase plugin = null;
             try {
-                LOGGER.info("successfully load plugin : " + pluginInformations.getName());
-                PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations ,file);
-                PluginBase plugin = classLoader.plugin;
+                LOGGER.info("loading plugin : " + pluginInformations.getName());
+                PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations , file);
+                plugin = classLoader.plugin;
+                plugin.loaded = true;
 
-
-                pluginLoaded.add(plugin);
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
+                plugin.loaded = false;
             }
-        })), "PluginWorker");
-        working.start();
-
+            pluginLoaded.add(plugin);
+            Thread.currentThread().interrupt();
+        }));
     }
     private String getPluginJson(File file) {
         try {
             byte[] buffer = new byte[16384];
             JarFile in = new JarFile(file);
 
-            try {
                 InputStream ein = in.getInputStream(in.getEntry("plugin.json"));
                 StringBuilder stringBuilder = new StringBuilder();
 
@@ -106,12 +115,7 @@ public class JavaPluginLoader {
 
                 in.close();
 
-
                 return stringBuilder.toString();
-            } catch (NullPointerException var15) {
-                var15.printStackTrace();
-                return null;
-            }
         } catch (IOException var16) {
             var16.printStackTrace();
             return null;

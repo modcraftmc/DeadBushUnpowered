@@ -49,8 +49,7 @@ public class PluginClassLoader extends URLClassLoader {
         Validate.notNull(pluginBase, "plugin null");
         Validate.isTrue(pluginBase.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
 
-        pluginBase.setPluginInformations(informations);
-        pluginBase.init();
+        pluginBase.init(informations);
 
     }
 }

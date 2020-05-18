@@ -13,6 +13,7 @@ public abstract class PluginBase implements Plugin {
     protected File dataFolder = new File(pluginFolder, "configs");
     protected Logger LOGGER;
     public static PluginBase instance;
+    public boolean loaded = false;
 
     private PluginInformations pluginInformations;
 
@@ -27,12 +28,11 @@ public abstract class PluginBase implements Plugin {
         ((PluginClassLoader) classLoader).initialize(this);
     }
 
-    public void init() {
+    public void init(PluginInformations informations) {
+        pluginInformations = informations;
         LOGGER = LogManager.getLogger("PluginThread/" + pluginInformations.getName());
         onEnable();
     }
-
-
 
 
     public static <T extends PluginBase> T getPlugin(Class<T> clazz) {
@@ -52,9 +52,6 @@ public abstract class PluginBase implements Plugin {
         return clazz.cast(plugin);
     }
 
-    public void setPluginInformations(PluginInformations pluginInformations) {
-        this.pluginInformations = pluginInformations;
-    }
 
     public PluginInformations getPluginInformations() {
         return pluginInformations;
