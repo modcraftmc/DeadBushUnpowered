@@ -7,8 +7,13 @@ import fr.modcraftmc.pluginloader.plugin.PluginBase;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PluginCommand {
@@ -20,20 +25,25 @@ public class PluginCommand {
     }
 
     public static int execute(Entity player) {
-
-        StringTextComponent header = new StringTextComponent("Liste des plugins chargés");
         List<PluginBase> plugins = JavaPluginLoader.pluginLoaded;
-        StringBuilder builder = new StringBuilder();
+        StringTextComponent header = new StringTextComponent(String.format("Liste des plugins chargés (%s) :", plugins.size()));
+        List<ITextComponent> extras = new ArrayList<>();
         for (PluginBase plugin : plugins) {
-            builder.append(plugin.getPluginInformations().getName());
-            builder.append(", ");
+
+            ITextComponent text = new StringTextComponent("§e" + plugin.getPluginInformations().getName());
+            text.applyTextStyle((test)-> {
+                test.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("§aID: " + plugin.getPluginInformations().getId()
+                + "\n" + "Nom: " + plugin.getPluginInformations().getName()
+                + "\n" + "Créé par: " + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray()))));
+            });
+            extras.add(text);
         }
-        StringTextComponent pluginlist = new StringTextComponent(builder.toString());
+
 
 
 
         player.sendMessage(header);
-        player.sendMessage(pluginlist);
+        extras.forEach(player::sendMessage);
         return 1;
     }
 }
