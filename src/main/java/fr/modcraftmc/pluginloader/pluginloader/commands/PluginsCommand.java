@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PluginCommand {
+public class PluginsCommand {
 
     public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
 
@@ -29,7 +29,8 @@ public class PluginCommand {
         for (PluginBase plugin : plugins) {
 
             ITextComponent text = new StringTextComponent("§a" + plugin.getPluginInformations().getName());
-            text.applyTextStyle((test)-> test.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("§aID: " + plugin.getPluginInformations().getId()
+            text.applyTextStyle((component)-> component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(
+                    "§aID: " + plugin.getPluginInformations().getId()
             + "\n" + "Nom: " + plugin.getPluginInformations().getName()
             + "\n" + "Créé par: " + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray())
             + "\n" + "Version: " + plugin.getPluginInformations().getVersion()))));

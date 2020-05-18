@@ -1,6 +1,6 @@
 package fr.modcraftmc.pluginloader;
 
-import fr.modcraftmc.pluginloader.pluginloader.commands.PluginCommand;
+import fr.modcraftmc.pluginloader.pluginloader.commands.PluginsCommand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,7 +20,7 @@ public class DeadBushUnpowered {
 
     @SubscribeEvent
     public void onServerStart(final FMLServerStartingEvent event) {
-        PluginCommand.register(event.getCommandDispatcher());
+        PluginsCommand.register(event.getCommandDispatcher());
     }
 
 }

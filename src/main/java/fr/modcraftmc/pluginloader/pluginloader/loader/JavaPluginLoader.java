@@ -78,6 +78,8 @@ public class JavaPluginLoader {
 
         if (!file.getName().endsWith(".jar")) throw new PluginLoadException(file);
 
+
+
     }
 
     public void loadPlugins(Collection<File> toload) {
