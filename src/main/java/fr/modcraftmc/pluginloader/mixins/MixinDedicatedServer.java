@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import fr.modcraftmc.pluginloader.plugin.*;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PendingCommand;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
@@ -11,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
@@ -59,8 +63,14 @@ public class MixinDedicatedServer {
            }
 
         });
-
     }
+
+    @Inject(method = "stopServer", at = @At("HEAD"))
+    public void stopServer(CallbackInfo ci) {
+        pluginLoaded.forEach((Plugin::onDisable));
+    }
+
+
 
     private void checkPlugin(File file) throws PluginLoadException {
 
