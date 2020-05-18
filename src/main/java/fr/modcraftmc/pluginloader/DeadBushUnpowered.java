@@ -10,6 +10,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod("deadbushunpowered")
 public class DeadBushUnpowered {
 
+    public static boolean CommandBlockEnabled = false;
+
     public DeadBushUnpowered() {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onServerStart);

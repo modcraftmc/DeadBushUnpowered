@@ -1,8 +1,8 @@
 package fr.modcraftmc.pluginloader.pluginloader.loader;
 
 import com.google.gson.Gson;
-import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
 import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,8 +17,8 @@ import java.util.jar.JarFile;
 
 public class JavaPluginLoader {
 
-    private static File pluginFolder = new File(".", "plugins");
-    private static File configFolder = new File(pluginFolder, "configs");
+    public File pluginFolder = new File(".", "plugins");
+    private File configFolder = new File(pluginFolder, "configs");
 
     public static ArrayList<PluginBase> pluginLoaded = new ArrayList<>();
 
@@ -78,30 +78,50 @@ public class JavaPluginLoader {
 
         if (!file.getName().endsWith(".jar")) throw new PluginLoadException(file);
 
+    }
 
+    public PluginBase getPlugin(String name) {
 
+        return pluginLoaded.stream().filter((pl)-> pl.getPluginInformations().getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public void loadPlugins(Collection<File> toload) {
-        toload.forEach((file -> {
-
-            String json = getPluginJson(file);
-            PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
-            PluginBase plugin = null;
-            try {
-                LOGGER.info("loading plugin : " + pluginInformations.getName());
-                PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations , file);
-                plugin = classLoader.plugin;
-                plugin.loaded = true;
-
-            } catch (MalformedURLException e) {
-                LOGGER.error(e.getMessage());
-                plugin.loaded = false;
-            }
-            pluginLoaded.add(plugin);
-            Thread.currentThread().interrupt();
-        }));
+        toload.forEach((this::loadplugin));
     }
+
+    public void loadplugin(File file) {
+
+        String json = getPluginJson(file);
+        PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
+
+        for (PluginBase pluginBase : pluginLoaded) {
+            if (pluginBase.getPluginInformations().getId().equalsIgnoreCase(pluginInformations.getId())) return;
+
+        }
+
+        PluginBase plugin = null;
+        try {
+            LOGGER.info("loading plugin : " + pluginInformations.getName());
+            PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations , file);
+            plugin = classLoader.plugin;
+            plugin.loaded = true;
+
+        } catch (MalformedURLException e) {
+            LOGGER.error(e.getMessage());
+            plugin.loaded = false;
+        }
+        pluginLoaded.add(plugin);
+        Thread.currentThread().interrupt();
+
+    }
+
+    public void unloadPlugin(PluginBase plugin) {
+        plugin.onDisable();
+        plugin.loaded = false;
+        pluginLoaded.remove(plugin);
+    }
+
+
     private String getPluginJson(File file) {
         try {
             byte[] buffer = new byte[16384];

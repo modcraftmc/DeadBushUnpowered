@@ -1,5 +1,6 @@
 package fr.modcraftmc.pluginloader.mixins;
 
+import fr.modcraftmc.pluginloader.DeadBushUnpowered;
 import fr.modcraftmc.pluginloader.pluginloader.loader.JavaPluginLoader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,12 +19,17 @@ public class MixinDedicatedServer {
     public void init(CallbackInfoReturnable<Boolean> cir) {
         javaPluginLoader.handleStart();
 
-
     }
 
     @Inject(method = "stopServer", at = @At("HEAD"))
     public void stopServer(CallbackInfo ci) {
         javaPluginLoader.handleStop();
+
+    }
+
+    @Inject(method = "isCommandBlockEnabled", at = @At("RETURN"))
+    public void commandBlock(CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(DeadBushUnpowered.CommandBlockEnabled);
 
     }
 
