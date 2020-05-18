@@ -34,9 +34,6 @@ public abstract class PluginBase implements Plugin {
     }
 
 
-    public void shutdown() {
-        onDisable();
-    }
 
 
     public static <T extends PluginBase> T getPlugin(Class<T> clazz) {

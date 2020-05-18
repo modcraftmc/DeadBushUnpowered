@@ -51,8 +51,4 @@ public class PluginClassLoader extends URLClassLoader {
         pluginBase.init();
 
     }
-
-    synchronized void shutdown(PluginBase pluginBase) {
-        pluginBase.shutdown();
-    }
 }
