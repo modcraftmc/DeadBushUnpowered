@@ -1,6 +1,6 @@
 package fr.modcraftmc.pluginloader.mixins;
 
-import fr.modcraftmc.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
 
 public class JavaPlugin extends PluginBase {
 

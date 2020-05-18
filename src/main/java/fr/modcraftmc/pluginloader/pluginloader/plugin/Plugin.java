@@ -1,4 +1,4 @@
-package fr.modcraftmc.pluginloader.plugin;
+package fr.modcraftmc.pluginloader.pluginloader.plugin;
 
 public interface Plugin {
 

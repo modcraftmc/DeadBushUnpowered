@@ -1,6 +1,8 @@
-package fr.modcraftmc.pluginloader.plugin;
+package fr.modcraftmc.pluginloader.pluginloader.loader;
 
 import com.google.gson.Gson;
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +13,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.jar.JarFile;
 
 public class JavaPluginLoader {
@@ -32,7 +35,9 @@ public class JavaPluginLoader {
         LOGGER.info("loading plugin phase DISCOVERING");
         if (!pluginFolder.exists()) pluginFolder.mkdirs();
         Collection<File> pluginToLoad = FileUtils.listFiles(pluginFolder, null, true);
+        LOGGER.info(String.format("Found %s plugins to load", pluginToLoad.size()));
 
+        LOGGER.info("loading plugin phase LOADING");
         pluginToLoad.forEach((plugin)-> {
 
             LOGGER.info("attempting to load" + plugin.getName());
@@ -41,10 +46,14 @@ public class JavaPluginLoader {
                 checkPlugin(plugin);
             } catch (PluginLoadException e) {
                 e.printStackTrace();
+                pluginToLoad.remove(plugin);
                 return;
             }
 
+            loadPlugins(pluginToLoad);
+
         });
+        LOGGER.info("plugin loading finish");
 
     }
 
@@ -59,24 +68,28 @@ public class JavaPluginLoader {
 
         if (!file.getName().endsWith(".jar")) throw new PluginLoadException(file);
 
-        String json = getPluginJson(file);
-        PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
-
-        try {
-            LOGGER.info("successfully load plugin : " + pluginInformations.getName());
-            PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations ,file);
-            PluginBase plugin = classLoader.plugin;
-
-            pluginLoaded.add(plugin);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-
-
-
     }
 
+    public void loadPlugins(Collection<File> toload) {
+        Thread working = new Thread(() -> toload.forEach((file -> {
+
+            String json = getPluginJson(file);
+            PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
+
+            try {
+                LOGGER.info("successfully load plugin : " + pluginInformations.getName());
+                PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations ,file);
+                PluginBase plugin = classLoader.plugin;
+
+
+                pluginLoaded.add(plugin);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        })), "PluginWorker");
+        working.start();
+
+    }
     private String getPluginJson(File file) {
         try {
             byte[] buffer = new byte[16384];

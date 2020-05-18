@@ -1,6 +1,6 @@
 package fr.modcraftmc.pluginloader.mixins;
 
-import fr.modcraftmc.pluginloader.plugin.JavaPluginLoader;
+import fr.modcraftmc.pluginloader.pluginloader.loader.JavaPluginLoader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

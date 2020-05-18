@@ -1,5 +1,7 @@
-package fr.modcraftmc.pluginloader.plugin;
+package fr.modcraftmc.pluginloader.pluginloader.loader;
 
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
 import org.apache.commons.lang3.Validate;
 
 import java.io.File;
@@ -43,7 +45,7 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
 
-    synchronized void initialize(PluginBase pluginBase) {
+    public synchronized void initialize(PluginBase pluginBase) {
         Validate.notNull(pluginBase, "plugin null");
         Validate.isTrue(pluginBase.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
 

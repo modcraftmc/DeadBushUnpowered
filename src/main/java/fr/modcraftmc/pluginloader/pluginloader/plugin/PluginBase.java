@@ -1,13 +1,12 @@
-package fr.modcraftmc.pluginloader.plugin;
+package fr.modcraftmc.pluginloader.pluginloader.plugin;
 
-import net.minecraftforge.fml.common.Mod;
+import fr.modcraftmc.pluginloader.pluginloader.loader.PluginClassLoader;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod.EventBusSubscriber
 public abstract class PluginBase implements Plugin {
 
     protected File pluginFolder = new File(".", "plugins");

@@ -1,6 +1,6 @@
 package fr.modcraftmc.pluginloader;
 
-import fr.modcraftmc.pluginloader.plugin.commands.PluginCommand;
+import fr.modcraftmc.pluginloader.pluginloader.commands.PluginCommand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

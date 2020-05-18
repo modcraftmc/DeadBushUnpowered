@@ -1,15 +1,13 @@
-package fr.modcraftmc.pluginloader.plugin.commands;
+package fr.modcraftmc.pluginloader.pluginloader.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.realmsclient.gui.ChatFormatting;
-import fr.modcraftmc.pluginloader.plugin.JavaPluginLoader;
-import fr.modcraftmc.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.pluginloader.pluginloader.loader.JavaPluginLoader;
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 
 import java.util.ArrayList;
