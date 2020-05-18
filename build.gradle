@@ -131,7 +131,9 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
     compile 'org.spongepowered:mixin:0.8.1-SNAPSHOT'
+
     shade group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
+    shade 'org.spongepowered:mixin:0.8.1-SNAPSHOT'
 
 }
 
@@ -141,7 +143,7 @@ tasks.withType(JavaCompile) {
 
 shadowJar {
     configurations = [ project.configurations.shade ]
-    classifier = 'mod'
+    classifier = 'shade'
 
     dependencies {
         exclude(dependency('com.google.code.gson:gson:.*'))

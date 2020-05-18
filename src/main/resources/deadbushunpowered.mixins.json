@@ -8,6 +8,8 @@
   },
   "minVersion": "0.8",
   "server": [
-    "MixinDedicatedServer"
+    "MixinDedicatedServer",
+    "MixinPlayerList",
+    "MixinServerPlayNetHandler"
   ]
 }
