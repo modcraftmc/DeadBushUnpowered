@@ -21,11 +21,11 @@ import java.util.List;
 
 public class PluginsCommand {
 
-    public static JavaPluginLoader javaPluginLoader = new JavaPluginLoader();
+    public static JavaPluginLoader javaPluginLoader = JavaPluginLoader.getInstance();
 
     public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
 
-        commandDispatcher.register(Commands.literal("plugins").executes((cmd)-> execute(cmd.getSource().asPlayer())));
+        commandDispatcher.register(Commands.literal("plugins").executes((cmd)-> list(cmd.getSource().asPlayer())));
 
 
         commandDispatcher.register(
@@ -74,8 +74,9 @@ public class PluginsCommand {
     }
 
 
-    public static int execute(Entity player) {
-        List<PluginBase> plugins = JavaPluginLoader.pluginLoaded;
+    public static int list(Entity player) {
+        List<PluginBase> plugins = javaPluginLoader.pluginLoaded;
+        System.out.println(javaPluginLoader.pluginLoaded);
         StringTextComponent header = new StringTextComponent(String.format("Liste des plugins chargés (%s) :", plugins.size()));
         List<ITextComponent> extras = new ArrayList<>();
         for (PluginBase plugin : plugins) {
@@ -84,6 +85,7 @@ public class PluginsCommand {
             text.applyTextStyle((component)-> component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(
                     "§aID: " + plugin.getPluginInformations().getId()
             + "\n" + "Nom: " + plugin.getPluginInformations().getName()
+            + "\n" + "Description: " + plugin.getPluginInformations().getDescription()
             + "\n" + "Créé par: " + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray())
             + "\n" + "Version: " + plugin.getPluginInformations().getVersion()))));
             extras.add(text);

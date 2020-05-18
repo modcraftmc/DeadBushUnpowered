@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.jar.JarFile;
 
@@ -20,11 +21,24 @@ public class JavaPluginLoader {
     public File pluginFolder = new File(".", "plugins");
     private File configFolder = new File(pluginFolder, "configs");
 
-    public static ArrayList<PluginBase> pluginLoaded = new ArrayList<>();
+    public ArrayList<PluginBase> pluginLoaded = new ArrayList<>();
 
     private static Gson gson = new Gson();
 
     private static Logger LOGGER = LogManager.getLogger("PluginLoader");
+
+    private static JavaPluginLoader instance;
+
+    public static Thread.UncaughtExceptionHandler exceptionHandler = (t, e) -> {
+        e.printStackTrace();
+        t.interrupt();
+
+    };
+
+    public JavaPluginLoader() {
+        instance = this;
+
+    }
 
 
     public void handleStart() {
@@ -53,11 +67,13 @@ public class JavaPluginLoader {
                 loadPlugins(pluginToLoad);
 
             });
-            LOGGER.info("plugin loading finish");
+            LOGGER.info("plugins loaded : " + Arrays.toString(pluginLoaded.toArray()));
             Thread.currentThread().interrupt();
 
         }, "PluginLoaderWorker");
+        working.setUncaughtExceptionHandler(exceptionHandler);
         working.start();
+
         try {
             working.join();
         } catch (InterruptedException e) {
@@ -93,11 +109,6 @@ public class JavaPluginLoader {
 
         String json = getPluginJson(file);
         PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
-
-        for (PluginBase pluginBase : pluginLoaded) {
-            if (pluginBase.getPluginInformations().getId().equalsIgnoreCase(pluginInformations.getId())) return;
-
-        }
 
         PluginBase plugin = null;
         try {
@@ -142,5 +153,9 @@ public class JavaPluginLoader {
             var16.printStackTrace();
             return null;
         }
+    }
+
+    public static JavaPluginLoader getInstance() {
+        return instance;
     }
 }

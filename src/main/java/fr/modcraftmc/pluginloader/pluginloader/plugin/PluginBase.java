@@ -18,7 +18,7 @@ public abstract class PluginBase implements Plugin {
     private PluginInformations pluginInformations;
 
     public PluginBase() {
-         ClassLoader classLoader = this.getClass().getClassLoader();
+        ClassLoader classLoader = this.getClass().getClassLoader();
 
         if (!(classLoader instanceof PluginClassLoader)) {
             throw new IllegalStateException("invalid class loader");
@@ -51,6 +51,7 @@ public abstract class PluginBase implements Plugin {
         }
         return clazz.cast(plugin);
     }
+
 
 
     public PluginInformations getPluginInformations() {

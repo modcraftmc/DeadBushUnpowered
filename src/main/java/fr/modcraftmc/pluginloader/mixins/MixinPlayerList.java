@@ -68,7 +68,7 @@ public abstract class MixinPlayerList {
     @Shadow public abstract int getMaxPlayers();
 
     /**
-     * @author
+     * @author mojang
      */
     @Overwrite
     public void initializeConnectionToPlayer(NetworkManager netManager, ServerPlayerEntity playerIn) {
@@ -116,11 +116,6 @@ public abstract class MixinPlayerList {
         playerIn.getRecipeBook().init(playerIn);
         this.sendScoreboard(serverworld.func_96441_U(), playerIn);
         this.server.refreshStatusNextTick();
-        ITextComponent itextcomponent;
-            itextcomponent = new StringTextComponent("§8[§a+§8]§f " + playerIn.getDisplayName().getFormattedText());
-
-
-        this.sendMessage(itextcomponent);
         serverplaynethandler.setPlayerLocation(playerIn.func_226277_ct_(), playerIn.func_226278_cu_(), playerIn.func_226281_cx_(), playerIn.rotationYaw, playerIn.rotationPitch);
         this.addPlayer(playerIn);
         this.uuidToPlayerMap.put(playerIn.getUniqueID(), playerIn);
@@ -170,6 +165,10 @@ public abstract class MixinPlayerList {
                 }
             }
         }
+
+        ITextComponent itextcomponent = new StringTextComponent("§8[§a+§8]§f " + playerIn.getDisplayName().getFormattedText());
+
+        this.sendMessage(itextcomponent);
 
         playerIn.addSelfToInternalCraftingInventory();
         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedIn( playerIn );

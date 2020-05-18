@@ -20,6 +20,7 @@ public class PluginInformations {
         this.authors = authors;
     }
 
+
     public String getId() {
         return id;
     }

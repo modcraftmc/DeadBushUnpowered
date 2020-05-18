@@ -23,7 +23,7 @@ public abstract class MixinServerPlayNetHandler {
     @Shadow protected abstract boolean func_217264_d();
 
     /**
-     * @author
+     * @author mojang
      */
     @Overwrite
     public void onDisconnect(ITextComponent reason) {
