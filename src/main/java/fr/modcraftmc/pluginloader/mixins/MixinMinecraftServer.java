@@ -5,4 +5,5 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
+
 }

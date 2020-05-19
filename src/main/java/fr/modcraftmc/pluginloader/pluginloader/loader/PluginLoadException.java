@@ -9,6 +9,6 @@ public class PluginLoadException extends Throwable {
     }
 
     public PluginLoadException(File file) {
-        super("unable to load plufin " + file.getName());
+        super("unable to load plugin " + file.getName());
     }
 }

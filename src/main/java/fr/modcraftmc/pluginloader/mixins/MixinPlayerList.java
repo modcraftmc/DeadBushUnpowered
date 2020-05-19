@@ -1,6 +1,7 @@
 package fr.modcraftmc.pluginloader.mixins;
 
 import com.mojang.authlib.GameProfile;
+import fr.modcraftmc.pluginloader.pluginloader.events.PluginEventFactory;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -67,6 +68,8 @@ public abstract class MixinPlayerList {
 
     @Shadow public abstract int getMaxPlayers();
 
+
+
     /**
      * @author mojang
      */
@@ -79,6 +82,9 @@ public abstract class MixinPlayerList {
         String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
         playerprofilecache.addEntry(gameprofile);
         CompoundNBT compoundnbt = this.readPlayerDataFromFile(playerIn);
+
+
+        PluginEventFactory.onPlayerPreloginEvent(netManager, playerIn);
 
         //Forge: Make sure the dimension hasn't been deleted, if so stick them in the overworld.
         ServerWorld serverworld = playerIn.dimension != null ? this.server.func_71218_a(playerIn.dimension) : null ;
@@ -97,7 +103,7 @@ public abstract class MixinPlayerList {
 
         LOGGER.info("{}[{}] logged in with entity id {} at ({}, {}, {})", playerIn.getName().getString(), s1, playerIn.getEntityId(), playerIn.func_226277_ct_(), playerIn.func_226278_cu_(), playerIn.func_226281_cx_());
         WorldInfo worldinfo = serverworld.getWorldInfo();
-        this.setPlayerGameTypeBasedOnOther(playerIn, (ServerPlayerEntity)null, serverworld);
+        this.setPlayerGameTypeBasedOnOther(playerIn, null, serverworld);
         ServerPlayNetHandler serverplaynethandler = new ServerPlayNetHandler(this.server, netManager, playerIn);
         net.minecraftforge.fml.network.NetworkHooks.sendMCRegistryPackets(netManager, "PLAY_TO_CLIENT");
         net.minecraftforge.fml.network.NetworkHooks.sendDimensionDataPacket(netManager, playerIn);

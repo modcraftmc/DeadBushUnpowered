@@ -150,6 +150,14 @@ shadowJar {
     }
 }
 
+/**
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+ **/
+
 jar.finalizedBy shadowJar
 
 

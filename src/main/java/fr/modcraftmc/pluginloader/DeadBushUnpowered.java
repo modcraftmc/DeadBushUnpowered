@@ -18,7 +18,6 @@ public class DeadBushUnpowered {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onServerStart);
         MinecraftForge.EVENT_BUS.register(this);
 
-
     }
 
     @SubscribeEvent

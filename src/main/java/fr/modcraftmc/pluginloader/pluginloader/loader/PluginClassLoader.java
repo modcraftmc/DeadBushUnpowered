@@ -1,7 +1,7 @@
 package fr.modcraftmc.pluginloader.pluginloader.loader;
 
-import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
 import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
 import org.apache.commons.lang3.Validate;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.net.URLClassLoader;
 
 public class PluginClassLoader extends URLClassLoader {
 
-    public PluginBase plugin;
+    private PluginBase plugin;
     public PluginInformations informations;
 
     static {
@@ -51,5 +51,9 @@ public class PluginClassLoader extends URLClassLoader {
 
         pluginBase.init(informations);
 
+    }
+
+    public PluginBase getPlugin() {
+        return plugin;
     }
 }
