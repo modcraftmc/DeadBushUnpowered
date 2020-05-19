@@ -3,13 +3,14 @@
   <groupId>fr.modcraftmc</groupId>
   <artifactId>DeadBushUnPowered</artifactId>
   <versioning>
-    <release>1.2-ALL</release>
+    <release>1.3-ALL</release>
     <versions>
       <version>1.0-SNAPSHOT</version>
       <version>1.1-SNAPSHOT</version>
       <version>1.1-ALL</version>
       <version>1.2-ALL</version>
+      <version>1.3-ALL</version>
     </versions>
-    <lastUpdated>20200519105849</lastUpdated>
+    <lastUpdated>20200519110718</lastUpdated>
   </versioning>
 </metadata>
