@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 
 import java.io.File;
@@ -57,7 +58,6 @@ public class PluginsCommand {
 
     public static int unload(CommandContext<CommandSource> cmd, String plugin) throws CommandSyntaxException {
 
-
         ServerPlayerEntity player = cmd.getSource().asPlayer();
 
         new Thread(() -> {
@@ -82,12 +82,19 @@ public class PluginsCommand {
         for (PluginBase plugin : plugins) {
 
             ITextComponent text = new StringTextComponent("§a" + plugin.getPluginInformations().getName());
-            text.applyTextStyle((component)-> component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(
-                    "§aID: " + plugin.getPluginInformations().getId()
-            + "\n" + "Nom: " + plugin.getPluginInformations().getName()
-            + "\n" + "Description: " + plugin.getPluginInformations().getDescription()
-            + "\n" + "Créé par: " + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray())
-            + "\n" + "Version: " + plugin.getPluginInformations().getVersion()))));
+            text.applyTextStyle((component)-> {
+                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(
+                        "§aID: " + plugin.getPluginInformations().getId()
+                                + "\n" + "Nom: " + plugin.getPluginInformations().getName()
+                                + "\n" + "Description: " + plugin.getPluginInformations().getDescription()
+                                + "\n" + "Créé par: " + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray())
+                                + "\n" + "Version: " + plugin.getPluginInformations().getVersion())));
+
+
+                component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/plugin unload " + plugin.getPluginInformations().getId()));
+            });
+
+
             extras.add(text);
         }
 
