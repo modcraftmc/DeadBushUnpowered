@@ -31,12 +31,8 @@ public class PluginClassLoader extends URLClassLoader {
                 throw new PluginLoadException();
             }
 
-            Class<? extends PluginBase> pluginClass = null;
-            try {
-                pluginClass = jarClass.asSubclass(PluginBase.class);
-            } catch (ClassCastException ex) {
+            Class<? extends PluginBase> pluginClass = jarClass.asSubclass(PluginBase.class);
 
-            }
 
             plugin = pluginClass.newInstance();
         } catch (IllegalAccessException | InstantiationException | PluginLoadException ex) {

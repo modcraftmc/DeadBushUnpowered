@@ -3,7 +3,6 @@ package fr.modcraftmc.pluginloader.pluginloader.loader;
 import com.google.gson.Gson;
 import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
 import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -111,7 +110,6 @@ public class JavaPluginLoader {
         try {
             LOGGER.info("loading plugin : " + pluginInformations.getName());
             PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations , file);
-            MinecraftForge.EVENT_BUS.register(classLoader);
             plugin = classLoader.getPlugin();
 
             pluginLoaded.add(plugin);
