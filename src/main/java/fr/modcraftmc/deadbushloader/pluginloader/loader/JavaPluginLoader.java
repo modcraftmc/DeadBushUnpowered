@@ -1,8 +1,8 @@
-package fr.modcraftmc.pluginloader.pluginloader.loader;
+package fr.modcraftmc.deadbushloader.pluginloader.loader;
 
 import com.google.gson.Gson;
-import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
-import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginInformations;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

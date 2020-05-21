@@ -1,4 +1,4 @@
-package fr.modcraftmc.pluginloader.pluginloader.events;
+package fr.modcraftmc.deadbushloader.pluginloader.events;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;

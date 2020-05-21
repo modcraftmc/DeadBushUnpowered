@@ -1,7 +1,7 @@
-package fr.modcraftmc.pluginloader.mixins;
+package fr.modcraftmc.deadbushloader.mixins;
 
 import com.mojang.authlib.GameProfile;
-import fr.modcraftmc.pluginloader.pluginloader.events.PluginEventFactory;
+import fr.modcraftmc.deadbushloader.pluginloader.events.PluginEventFactory;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

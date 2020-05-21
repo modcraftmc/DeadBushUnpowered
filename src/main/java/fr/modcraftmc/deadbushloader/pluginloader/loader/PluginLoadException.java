@@ -1,4 +1,4 @@
-package fr.modcraftmc.pluginloader.pluginloader.loader;
+package fr.modcraftmc.deadbushloader.pluginloader.loader;
 
 import java.io.File;
 

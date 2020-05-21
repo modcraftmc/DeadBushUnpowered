@@ -1,1 +1,1 @@
-MixinConnector: fr.modcraftmc.pluginloader.mixins.MixinConnector
+MixinConnector: fr.modcraftmc.deadbushloader.mixins.MixinConnector

@@ -1,7 +1,7 @@
-package fr.modcraftmc.pluginloader.mixins;
+package fr.modcraftmc.deadbushloader.mixins;
 
-import fr.modcraftmc.pluginloader.DeadBushUnpowered;
-import fr.modcraftmc.pluginloader.pluginloader.loader.JavaPluginLoader;
+import fr.modcraftmc.deadbushloader.DeadBushUnpowered;
+import fr.modcraftmc.deadbushloader.pluginloader.loader.JavaPluginLoader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(DedicatedServer.class)
 public class MixinDedicatedServer {
 
-    private JavaPluginLoader javaPluginLoader = new JavaPluginLoader();
+    private final JavaPluginLoader javaPluginLoader = new JavaPluginLoader();
 
 
     @Inject(method = "init", at = @At("HEAD"))

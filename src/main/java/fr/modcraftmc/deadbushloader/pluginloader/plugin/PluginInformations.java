@@ -1,15 +1,15 @@
-package fr.modcraftmc.pluginloader.pluginloader.plugin;
+package fr.modcraftmc.deadbushloader.pluginloader.plugin;
 
 import java.util.List;
 
 public class PluginInformations {
 
-    private String id;
-    private String name;
-    private String mainClass;
-    private String version;
-    private String description;
-    private List<String> authors;
+    private final String id;
+    private final String name;
+    private final String mainClass;
+    private final String version;
+    private final String description;
+    private final List<String> authors;
 
     public PluginInformations(String id, String name, String mainClass, String version, String description, List<String> authors) {
         this.id = id;

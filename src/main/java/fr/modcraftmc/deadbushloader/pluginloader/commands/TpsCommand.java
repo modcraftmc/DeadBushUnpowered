@@ -1,4 +1,4 @@
-package fr.modcraftmc.pluginloader.pluginloader.commands;
+package fr.modcraftmc.deadbushloader.pluginloader.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;

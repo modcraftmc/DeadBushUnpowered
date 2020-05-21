@@ -1,4 +1,4 @@
-package fr.modcraftmc.pluginloader.mixins;
+package fr.modcraftmc.deadbushloader.mixins;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

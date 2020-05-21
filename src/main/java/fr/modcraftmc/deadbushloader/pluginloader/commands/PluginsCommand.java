@@ -1,11 +1,11 @@
-package fr.modcraftmc.pluginloader.pluginloader.commands;
+package fr.modcraftmc.deadbushloader.pluginloader.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fr.modcraftmc.pluginloader.pluginloader.loader.JavaPluginLoader;
-import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.deadbushloader.pluginloader.loader.JavaPluginLoader;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginBase;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;

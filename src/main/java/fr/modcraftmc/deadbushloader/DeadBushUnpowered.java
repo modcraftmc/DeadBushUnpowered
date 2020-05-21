@@ -1,7 +1,7 @@
-package fr.modcraftmc.pluginloader;
+package fr.modcraftmc.deadbushloader;
 
-import fr.modcraftmc.pluginloader.pluginloader.commands.PluginsCommand;
-import fr.modcraftmc.pluginloader.pluginloader.commands.TpsCommand;
+import fr.modcraftmc.deadbushloader.pluginloader.commands.PluginsCommand;
+import fr.modcraftmc.deadbushloader.pluginloader.commands.TpsCommand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

@@ -1,4 +1,4 @@
-package fr.modcraftmc.pluginloader.mixins;
+package fr.modcraftmc.deadbushloader.mixins;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.ServerPlayNetHandler;
@@ -27,7 +27,7 @@ public abstract class MixinServerPlayNetHandler {
      */
     @Overwrite
     public void onDisconnect(ITextComponent reason) {
-        this.LOGGER.info("{} lost connection: {}", this.player.getName().getString(), reason.getString());
+        LOGGER.info("{} lost connection: {}", this.player.getName().getString(), reason.getString());
         this.server.refreshStatusNextTick();
         this.server.getPlayerList().sendMessage((new StringTextComponent("§8[§4-§8]§f " + this.player.getDisplayName().getFormattedText())));
         this.player.disconnect();

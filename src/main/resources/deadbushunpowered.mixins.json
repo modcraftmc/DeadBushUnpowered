@@ -1,5 +1,5 @@
 {
-  "package": "fr.modcraftmc.pluginloader.mixins",
+  "package": "fr.modcraftmc.deadbushloader.mixins",
   "required": true,
   "compatibilityLevel": "JAVA_8",
   "refmap": "mixins.deadbushunpowered.refmap.json",

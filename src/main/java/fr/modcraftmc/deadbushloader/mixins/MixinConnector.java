@@ -1,4 +1,4 @@
-package fr.modcraftmc.pluginloader.mixins;
+package fr.modcraftmc.deadbushloader.mixins;
 
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.connect.IMixinConnector;

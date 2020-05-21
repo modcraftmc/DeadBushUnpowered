@@ -1,10 +1,11 @@
-package fr.modcraftmc.pluginloader.pluginloader.loader;
+package fr.modcraftmc.deadbushloader.pluginloader.loader;
 
-import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginBase;
-import fr.modcraftmc.pluginloader.pluginloader.plugin.PluginInformations;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginInformations;
 import org.apache.commons.lang3.Validate;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,7 +20,7 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
 
-    public PluginClassLoader(final String mainClass,final ClassLoader parent, final PluginInformations pluginInformations ,final File file) throws MalformedURLException {
+    public PluginClassLoader(final String mainClass, final ClassLoader parent, final PluginInformations pluginInformations, final File file) throws MalformedURLException {
         super(new URL[] {file.toURI().toURL()}, parent);
         this.informations = pluginInformations;
 
@@ -34,10 +35,11 @@ public class PluginClassLoader extends URLClassLoader {
             Class<? extends PluginBase> pluginClass = jarClass.asSubclass(PluginBase.class);
 
 
-            plugin = pluginClass.newInstance();
-        } catch (IllegalAccessException | InstantiationException | PluginLoadException ex) {
+            plugin = pluginClass.getDeclaredConstructor().newInstance();
+        } catch (IllegalAccessException | InstantiationException | PluginLoadException | NoSuchMethodException | InvocationTargetException ex) {
 
         }
+
     }
 
 
