@@ -5,11 +5,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.modcraftmc.deadbushloader.pluginloader.loader.JavaPluginLoader;
-import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.MCPlugin;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
@@ -28,7 +27,6 @@ public class PluginsCommand {
 
         commandDispatcher.register(Commands.literal("plugins").executes((cmd)-> list(cmd.getSource().asPlayer())));
 
-
         commandDispatcher.register(
                 Commands.literal("plugin")
                         .then(Commands.literal("unload")
@@ -37,49 +35,45 @@ public class PluginsCommand {
 
                         .then(Commands.literal("load")
                                 .then(Commands.argument("pl", StringArgumentType.string())
-                                        .executes((cmd)-> load(cmd, StringArgumentType.getString(cmd, "pl"))))));
+                                        .executes((cmd)-> load(cmd, StringArgumentType.getString(cmd, "pl")))))
+                        .then(Commands.literal("info")
+                                .then(Commands.argument("pl", StringArgumentType.string())
+                                        .executes((cmd) -> info(cmd, StringArgumentType.getString(cmd, "pl"))))));
     }
 
     public static int load(CommandContext<CommandSource> cmd, String plugin) throws CommandSyntaxException {
+        CommandSource player = cmd.getSource();
 
-
-        ServerPlayerEntity player = cmd.getSource().asPlayer();
-
-        new Thread(() -> {
-
-            player.sendMessage(new StringTextComponent("loading plugin " + plugin));
+        javaPluginLoader.executor.submit(() -> {
+            player.sendFeedback(new StringTextComponent("loading plugin " + plugin), true);
             javaPluginLoader.loadplugin(new File(javaPluginLoader.pluginFolder, plugin));
-
-        }, "PluginLoadingWorker").start();
+        });
 
         return 1;
-
     }
 
     public static int unload(CommandContext<CommandSource> cmd, String plugin) throws CommandSyntaxException {
 
-        ServerPlayerEntity player = cmd.getSource().asPlayer();
+        CommandSource player = cmd.getSource();
 
-        new Thread(() -> {
-            player.sendMessage(new StringTextComponent("unloading plugin " + plugin));
-            PluginBase pluginBase = javaPluginLoader.getPlugin(plugin);
+        javaPluginLoader.executor.submit(() -> {
+            player.sendFeedback(new StringTextComponent("unloading plugin " + plugin), true);
+            MCPlugin pluginBase = javaPluginLoader.getPlugin(plugin);
             if (pluginBase != null)
                 javaPluginLoader.unloadPlugin(pluginBase);
             else
-                player.sendMessage(new StringTextComponent("plugin == null !"));
-
-        }, "PluginLoadingWorker").start();
+                player.sendFeedback(new StringTextComponent("no plugins with this name !"), true);
+        });
 
         return 1;
     }
 
 
     public static int list(Entity player) {
-        List<PluginBase> plugins = javaPluginLoader.pluginLoaded;
-        System.out.println(javaPluginLoader.pluginLoaded);
+        List<MCPlugin> plugins = javaPluginLoader.pluginLoaded;
         StringTextComponent header = new StringTextComponent(String.format("Liste des plugins chargés (%s) :", plugins.size()));
         List<ITextComponent> extras = new ArrayList<>();
-        for (PluginBase plugin : plugins) {
+        for (MCPlugin plugin : plugins) {
 
             ITextComponent text = new StringTextComponent("§a" + plugin.getPluginInformations().getName());
             text.applyTextStyle((component)-> {
@@ -91,7 +85,7 @@ public class PluginsCommand {
                                 + "\n" + "Version: " + plugin.getPluginInformations().getVersion())));
 
 
-                component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/plugin unload " + plugin.getPluginInformations().getId()));
+                component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/plugin info " + plugin.getPluginInformations().getId()));
             });
 
 
@@ -100,6 +94,24 @@ public class PluginsCommand {
 
         player.sendMessage(header);
         extras.forEach(player::sendMessage);
+        return 1;
+    }
+
+    public static int info(CommandContext<CommandSource> cmd, String pluginName) throws CommandSyntaxException {
+
+        CommandSource player = cmd.getSource();
+
+        MCPlugin plugin = javaPluginLoader.pluginLoaded.stream().filter(pl -> pl.getPluginInformations().getId().equalsIgnoreCase(pluginName)).findFirst().get();
+
+        StringTextComponent msg = new StringTextComponent(
+                "§aID: §8" + plugin.getPluginInformations().getId()
+                        + "\n" + "§aNom: §8" + plugin.getPluginInformations().getName()
+                        + "\n" + "§aDescription: §8" + plugin.getPluginInformations().getDescription()
+                        + "\n" + "§aCréé par: §8" + Arrays.toString(plugin.getPluginInformations().getAuthors().toArray())
+                        + "\n" + "§aVersion: §8" + plugin.getPluginInformations().getVersion());
+
+        player.sendFeedback(msg, false);
+
         return 1;
     }
 }

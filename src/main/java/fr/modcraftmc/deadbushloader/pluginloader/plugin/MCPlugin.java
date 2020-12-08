@@ -6,31 +6,30 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-public abstract class PluginBase implements Plugin {
+public abstract class MCPlugin implements IPlugin {
 
     protected File pluginFolder = new File(".", "plugins");
-    protected File dataFolder = new File(pluginFolder, "configs");
+    protected File configFolder = new File(pluginFolder, "configs");
     protected Logger LOGGER;
-    public static PluginBase instance;
     public boolean loaded = false;
 
     private PluginInformations pluginInformations;
 
-    public PluginBase() {
+    public MCPlugin() {
         ClassLoader classLoader = this.getClass().getClassLoader();
 
         if (!(classLoader instanceof PluginClassLoader)) {
-            throw new IllegalStateException("invalid class loader");
+            throw new IllegalStateException("invalid classloader");
         }
 
-        instance = this;
         ((PluginClassLoader) classLoader).initialize(this);
     }
 
     public void init(PluginInformations informations) {
         pluginInformations = informations;
-        LOGGER = LogManager.getLogger("PluginThread/" + pluginInformations.getName());
-        onEnable();
+
+        LOGGER = LogManager.getLogger(pluginInformations.getName());
+        this.onEnable();
     }
 
 

@@ -20,8 +20,6 @@ public class TpsCommand {
     public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
 
         commandDispatcher.register(Commands.literal("tps").executes((cmd)-> getTps(cmd)));
-
-
     }
 
     private static int getTps(CommandContext<CommandSource> ctx) {
@@ -35,8 +33,6 @@ public class TpsCommand {
 
         return 1;
     }
-
-
 
     private static long mean(long[] values) {
         long sum = 0L;

@@ -10,7 +10,6 @@
   "server": [
     "MixinDedicatedServer",
     "MixinMinecraftServer",
-    "MixinPlayerList",
-    "MixinServerPlayNetHandler"
+    "MixinPlayerList"
   ]
 }

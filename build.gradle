@@ -80,6 +80,10 @@ repositories {
     maven {
         url = 'https://dist.creeper.host/Sponge/maven'
     }
+    maven {
+        name = 'ModcraftMC-REPO'
+        url = 'https://raw.githubusercontent.com/modcraftmc/ModcraftMaven/master/'
+    }
 }
 
 jar {
@@ -92,7 +96,7 @@ jar {
                 "Implementation-Version": version,
                 "Implementation-Vendor" :"DeadBushUnpowered",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConnector": "fr.modcraftmc.pluginloader.mixins.MixinConnector"
+                "MixinConnector": "fr.modcraftmc.deadbushloader.mixins.MixinConnector"
         ])
     }
 }
@@ -107,14 +111,12 @@ configurations {
 }
 
 
-
 dependencies {
 
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
-    compile 'org.spongepowered:mixin:0.8.1-SNAPSHOT'
-
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.47'
+    compile 'org.spongepowered:mixin:0.8.2:processor'
+    compile 'fr.modcraftmc:modcraftforge:0.0.9'
     shade group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
-    shade 'org.spongepowered:mixin:0.8.1-SNAPSHOT'
 
 }
 
@@ -131,13 +133,13 @@ shadowJar {
     }
 }
 
-/**
+/*
 jar {
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
- **/
+ */
 
 jar.finalizedBy shadowJar
 

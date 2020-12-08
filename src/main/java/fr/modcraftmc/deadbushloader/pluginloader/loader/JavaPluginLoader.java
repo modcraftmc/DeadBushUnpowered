@@ -1,57 +1,53 @@
 package fr.modcraftmc.deadbushloader.pluginloader.loader;
 
 import com.google.gson.Gson;
-import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.MCPlugin;
 import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginInformations;
+import fr.modcraftmc.modcraftforge.theading.ModcraftThreadFactory;
+import fr.modcraftmc.modcraftforge.theading.ThreadSettings;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
 import java.util.jar.JarFile;
 
 public class JavaPluginLoader {
 
     public File pluginFolder = new File(".", "plugins");
-    private final File configFolder = new File(pluginFolder, "configs");
-
     private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<>();
 
-    public ArrayList<PluginBase> pluginLoaded = new ArrayList<>();
+    public final ArrayList<MCPlugin> pluginLoaded = new ArrayList<>();
 
-    private static final Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
-    private static final Logger LOGGER = LogManager.getLogger("PluginLoader");
+    private final Logger LOGGER = LogManager.getLogger("DeadBushUnPowered");
 
     private static JavaPluginLoader instance;
 
-    public static Thread.UncaughtExceptionHandler exceptionHandler = (t, e) -> {
-        e.printStackTrace();
-        t.interrupt();
-
-    };
-
-    public JavaPluginLoader() {
-        instance = this;
-
-    }
-
+    public ExecutorService executor = ModcraftThreadFactory.registerExecutor(new ThreadSettings("DeadBushLoader", ThreadSettings.Type.CACHED, -1));
 
     public void handleStart() {
 
             LOGGER.info("DeadBushUnpowered is loading");
-
             LOGGER.info("loading plugin phase DISCOVERING");
+
             if (!pluginFolder.exists()) pluginFolder.mkdirs();
             Collection<File> pluginToLoad = FileUtils.listFiles(pluginFolder, null, true);
+            if (pluginToLoad.isEmpty()) {
+                LOGGER.info("0 plugin to load");
+                return;
+            }
             LOGGER.info(String.format("Found %s plugins to load", pluginToLoad.size()));
 
             LOGGER.info("loading plugin phase LOADING");
@@ -71,13 +67,10 @@ public class JavaPluginLoader {
 
             });
             LOGGER.info("plugins loaded : " + Arrays.toString(pluginLoaded.toArray()));
-
-
     }
 
     public void handleStop() {
         unloadPlugins();
-
     }
 
     private void checkPlugin(File file) throws PluginLoadException {
@@ -85,12 +78,11 @@ public class JavaPluginLoader {
         if (file.isDirectory()) throw new PluginLoadException(file);
 
         if (!file.getName().endsWith(".jar")) throw new PluginLoadException(file);
-
     }
 
-    public PluginBase getPlugin(String name) {
+    public MCPlugin getPlugin(String name) {
 
-        return pluginLoaded.stream().filter((pl)-> pl.getPluginInformations().getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return pluginLoaded.stream().filter((pl)-> pl.getPluginInformations().getId().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public void loadPlugins(Collection<File> toload) {
@@ -98,17 +90,25 @@ public class JavaPluginLoader {
     }
 
     public void unloadPlugins() {
-        pluginLoaded.forEach(PluginBase::onDisable);
+        pluginLoaded.forEach(this::unloadPlugin);
     }
 
     public void loadplugin(File file) {
 
-        String json = getPluginJson(file);
-        PluginInformations pluginInformations = gson.fromJson(json, PluginInformations.class);
-
-        PluginBase plugin = null;
+        MCPlugin plugin = null;
+        String json = null;
+        PluginInformations pluginInformations = null;
         try {
+            json = getPluginJson(file);
+            pluginInformations = gson.fromJson(json, PluginInformations.class);
+
+        } catch (IOException e) {
+            LOGGER.error("Failed to read plugin.json of {}. valid deadbush plugin ? : {}", file.getName(), e.getMessage());
+        }
+        try {
+
             LOGGER.info("loading plugin : " + pluginInformations.getName());
+
             PluginClassLoader classLoader = new PluginClassLoader(pluginInformations.getMainClass(), getClass().getClassLoader(), pluginInformations , file);
             plugin = classLoader.getPlugin();
 
@@ -116,44 +116,29 @@ public class JavaPluginLoader {
             loaders.add(classLoader);
             plugin.loaded = true;
 
-
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             plugin.loaded = false;
         }
 
     }
 
-    public void unloadPlugin(PluginBase plugin) {
-        plugin.onDisable();
-        plugin.loaded = false;
-        pluginLoaded.remove(plugin);
-    }
-
-
-    private String getPluginJson(File file) {
-        try {
-            byte[] buffer = new byte[1024];
-            JarFile in = new JarFile(file);
-
-                InputStream ein = in.getInputStream(in.getEntry("plugin.json"));
-                StringBuilder stringBuilder = new StringBuilder();
-
-                int nr;
-                while(0 < (nr = ein.read(buffer))) {
-                    stringBuilder.append(new String(buffer, 0, nr));
-                }
-
-                in.close();
-
-                return stringBuilder.toString();
-        } catch (IOException var16) {
-            var16.printStackTrace();
-            return null;
+    public synchronized void unloadPlugin(MCPlugin plugin) {
+        synchronized (pluginLoaded) {
+            plugin.onDisable();
+            plugin.loaded = false;
+            pluginLoaded.remove(plugin);
         }
     }
 
+
+    private String getPluginJson(File file) throws IOException {
+        JarFile jar = new JarFile(file);
+        InputStream in = jar.getInputStream(jar.getEntry("plugin.json"));
+        return IOUtils.toString(in, StandardCharsets.UTF_8);
+    }
+
     public static JavaPluginLoader getInstance() {
-        return instance;
+        return instance == null ? instance = new JavaPluginLoader() : instance;
     }
 }

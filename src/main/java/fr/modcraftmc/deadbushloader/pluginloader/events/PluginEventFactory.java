@@ -10,6 +10,5 @@ public class PluginEventFactory {
 
         PlayerEvents.EventPlayerPreLogin event = new PlayerEvents.EventPlayerPreLogin(netManager, playerIn);
         MinecraftForge.EVENT_BUS.post(event);
-
     }
 }

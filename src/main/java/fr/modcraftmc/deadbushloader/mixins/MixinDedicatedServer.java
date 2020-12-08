@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(DedicatedServer.class)
 public class MixinDedicatedServer {
 
-    private final JavaPluginLoader javaPluginLoader = new JavaPluginLoader();
+    private final JavaPluginLoader javaPluginLoader = JavaPluginLoader.getInstance();
 
 
     @Inject(method = "init", at = @At("HEAD"))

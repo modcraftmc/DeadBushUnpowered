@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.Event;
 public class PlayerEvents extends Event {
 
     @Cancelable
-    public static class EventPlayerPreLogin extends Event{
+    public static class EventPlayerPreLogin extends Event {
 
         private final NetworkManager networkManager;
         private final ServerPlayerEntity playerEntity;

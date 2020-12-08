@@ -1,6 +1,6 @@
 package fr.modcraftmc.deadbushloader.pluginloader.loader;
 
-import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginBase;
+import fr.modcraftmc.deadbushloader.pluginloader.plugin.MCPlugin;
 import fr.modcraftmc.deadbushloader.pluginloader.plugin.PluginInformations;
 import org.apache.commons.lang3.Validate;
 
@@ -12,7 +12,7 @@ import java.net.URLClassLoader;
 
 public class PluginClassLoader extends URLClassLoader {
 
-    private PluginBase plugin;
+    private MCPlugin plugin;
     public PluginInformations informations;
 
     static {
@@ -32,26 +32,27 @@ public class PluginClassLoader extends URLClassLoader {
                 throw new PluginLoadException();
             }
 
-            Class<? extends PluginBase> pluginClass = jarClass.asSubclass(PluginBase.class);
+            Class<? extends MCPlugin> pluginClass;
+            try {
+                pluginClass = jarClass.asSubclass(MCPlugin.class);
+            } catch (Exception e) {
+                throw new PluginLoadException(e.getMessage());
+            }
 
 
             plugin = pluginClass.getDeclaredConstructor().newInstance();
-        } catch (IllegalAccessException | InstantiationException | PluginLoadException | NoSuchMethodException | InvocationTargetException ex) {
+        } catch (IllegalAccessException | InstantiationException | PluginLoadException | NoSuchMethodException | InvocationTargetException ignored) {
 
         }
-
     }
 
-
-    public synchronized void initialize(PluginBase pluginBase) {
-        Validate.notNull(pluginBase, "plugin null");
+    public synchronized void initialize(MCPlugin pluginBase) {
+        Validate.notNull(pluginBase, "plugin instance is null");
         Validate.isTrue(pluginBase.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
-
         pluginBase.init(informations);
-
     }
 
-    public PluginBase getPlugin() {
+    public MCPlugin getPlugin() {
         return plugin;
     }
 }

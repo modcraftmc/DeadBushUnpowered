@@ -1,11 +1,16 @@
 package fr.modcraftmc.deadbushloader.pluginloader.loader;
 
 import java.io.File;
+import java.io.IOException;
 
-public class PluginLoadException extends Throwable {
+public class PluginLoadException extends IOException {
 
     public PluginLoadException() {
 
+    }
+
+    public PluginLoadException(String name) {
+        super(name);
     }
 
     public PluginLoadException(File file) {

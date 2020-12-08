@@ -1,7 +1,6 @@
 package fr.modcraftmc.deadbushloader.pluginloader.plugin;
 
-public interface Plugin {
-
+public interface IPlugin {
 
     void onEnable();
 
